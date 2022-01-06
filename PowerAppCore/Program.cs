@@ -1,14 +1,14 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PowerAppsConsole.Models;
+using PowerAppCore.Models;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace PowerAppsConsole
+namespace PowerAppCore
 {
     class Program
     {
@@ -21,8 +21,7 @@ namespace PowerAppsConsole
             var client = CreateClient(token);
 
             //await InsertAccountRecord(client);
-            // await ListRecords(client);
-            await UpdateAccountRecord(client);
+            await ListRecords(client);
 
             Console.ReadKey();
 
@@ -73,17 +72,12 @@ namespace PowerAppsConsole
             var model = new AccountModel()
             {
                 AccountNo = "13456798",
-                Name = $"Patch Console Record - {DateTime.Now.ToString("dd-MM-yyyy HH:MM")}",
+                Name = "Patch Console Record 2",
                 Telephone1 = "0567432"
             };
 
             var accountId = "426b4262-fd6d-ec11-8943-000d3a37305a";
-            client.DefaultRequestHeaders.Add("PREFER", "return=representation");
-            client.DefaultRequestHeaders.Add("If-Match", "*");
-            var result = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"accounts({accountId})")
-            {
-                Content = new StringContent(JsonConvert.SerializeObject(model),System.Text.Encoding.UTF8, "application/json")
-            });
+            var result = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"accounts({accountId})"));
 
             if (!HasFailure(result))
             {

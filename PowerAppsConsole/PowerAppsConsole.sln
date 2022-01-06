@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerAppsConsole", "PowerAppsConsole.csproj", "{13ED80D9-46E4-48BC-AF75-1666BE8BA641}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerAppCore", "..\PowerAppCore\PowerAppCore.csproj", "{610CE3AE-CD94-486D-A558-C12C2CE15C6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{13ED80D9-46E4-48BC-AF75-1666BE8BA641}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13ED80D9-46E4-48BC-AF75-1666BE8BA641}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13ED80D9-46E4-48BC-AF75-1666BE8BA641}.Release|Any CPU.Build.0 = Release|Any CPU
+		{610CE3AE-CD94-486D-A558-C12C2CE15C6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{610CE3AE-CD94-486D-A558-C12C2CE15C6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{610CE3AE-CD94-486D-A558-C12C2CE15C6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{610CE3AE-CD94-486D-A558-C12C2CE15C6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,15 +23,16 @@ namespace PowerAppsConsole
             var client = CreateClient(token);
             var crudRepo = new CrudOperation<AccountModel>(client, "accounts");
 
-            string accountId = "426b4262-fd6d-ec11-8943-000d3a37305a";
 
-            await crudRepo.Insert(new AccountModel()
+            var rec = await crudRepo.Insert(new AccountModel()
             {
                 AccountNo = Guid.NewGuid().ToString().Substring(0, 20),
                 Name = DateTime.Now.ToString("dd-MM-yyyy HH:MM"),
                 Telephone1 = "123456789"
             });
 
+            string accountId = rec.AccountId;
+           
             await crudRepo.UpdateRecord(accountId, new AccountModel()
             {
                 AccountNo = Guid.NewGuid().ToString().Substring(0, 20),
@@ -44,6 +45,10 @@ namespace PowerAppsConsole
             await crudRepo.ListRecords();
 
             await crudRepo.GetRecord(accountId);
+
+            await crudRepo.DeleteProperty(accountId, "name");
+
+            await crudRepo.Delete(accountId);
 
             Console.ReadKey();
 
@@ -98,34 +103,5 @@ namespace PowerAppsConsole
             var response = await client.GetAsync("WhoAmI");
             Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
-
-        ///// <summary>
-        ///// Update Account Record
-        ///// </summary>
-        ///// <param name="client"></param>
-        ///// <param name="accountId"></param>
-        ///// <returns></returns>
-        //public static async Task UpdateAccountRecord(HttpClient client, string accountId)
-        //{
-        //    var model = new AccountModel()
-        //    {
-        //        AccountNo = "13456798",
-        //        Name = $"Patch Console Record - {DateTime.Now.ToString("dd-MM-yyyy HH:MM")}",
-        //        Telephone1 = "0567432"
-        //    };
-
-        //    var accountId = "426b4262-fd6d-ec11-8943-000d3a37305a";
-        //    client.DefaultRequestHeaders.Add("PREFER", "return=representation");
-        //    client.DefaultRequestHeaders.Add("If-Match", "*");
-        //    var result = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"accounts({accountId})")
-        //    {
-        //        Content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json")
-        //    });
-
-        //    if (!HasFailure(result))
-        //    {
-        //        Console.WriteLine(await result.Content.ReadAsStringAsync());
-        //    }
-        //}
     }
 }

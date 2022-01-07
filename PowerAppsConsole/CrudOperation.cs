@@ -82,7 +82,7 @@ namespace PowerAppsConsole
             }
         }
 
-        public async Task Insert(T model)
+        public async Task<T> Insert(T model)
         {
             ClearHeaders();
             client.DefaultRequestHeaders.Add("PREFER", "return=representation");
@@ -93,7 +93,11 @@ namespace PowerAppsConsole
                 var record = JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync());
                 Console.WriteLine("Insertion Success");
                 Console.WriteLine(JsonConvert.SerializeObject(record, Formatting.Indented));
+
+                return record;
             }
+
+            return default(T);
         }
 
         public async Task Delete(string primaryKey)
@@ -103,6 +107,17 @@ namespace PowerAppsConsole
             if (!HasFailure(result) && result.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
                 Console.WriteLine($"Deleted Record with Key :{primaryKey}");
+            }
+        }
+
+        public async Task DeleteProperty(string primaryKey, string propertyName)
+        {
+            ClearHeaders();
+            var result = await client.DeleteAsync($"{TableName}({primaryKey})/{propertyName}");
+            if (!HasFailure(result) && result.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                Console.WriteLine($"Deleted Record with Key :{primaryKey}");
+                await GetRecord(primaryKey);
             }
         }
 

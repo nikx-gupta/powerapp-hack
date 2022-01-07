@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+using PowerAppsConsole.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -18,11 +18,10 @@ namespace PowerAppsConsole
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public CrudOperation(HttpClient client, string tableName)
+        public CrudOperation(ServiceClient client, string tableName)
         {
-            this.client = client;
+            this.client = client.CreateClient().Result;
             TableName = tableName;
-
         }
 
         public async Task UpdateRecord(string primaryKey, T model)
@@ -144,11 +143,5 @@ namespace PowerAppsConsole
                 client.DefaultRequestHeaders.Remove("PREFER");
             }
         }
-    }
-
-    public class DataverseResponse<T>
-    {
-        [JsonProperty("value")]
-        public List<T> Records { get; set; }
     }
 }

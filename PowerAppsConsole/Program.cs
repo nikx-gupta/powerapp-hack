@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PowerAppsConsole
@@ -19,10 +20,18 @@ namespace PowerAppsConsole
 
         static async Task<int> Main()
         {
-            var token = await GetToken();
-            var client = CreateClient(token);
-            var crudRepo = new CrudOperation<AccountModel>(client, "accounts");
+            var client = new ServiceClient(new PowerAppClientSettings()
+            {
+                DataverseUrl = DataverseUrl,
+                ClientId = ClientId,
+                ClientSecret = ClientSecret,
+                TenantId = TenantId
+            });
 
+            var crudRepo = new CrudOperation<AccountModel>(client, "accounts");
+            var changeTracking = new ChangeTrackingOperation<AccountModel>(client, "accounts");
+
+            await changeTracking.GetChangeDelta();
 
             var rec = await crudRepo.Insert(new AccountModel()
             {
@@ -32,76 +41,29 @@ namespace PowerAppsConsole
             });
 
             string accountId = rec.AccountId;
-           
-            await crudRepo.UpdateRecord(accountId, new AccountModel()
-            {
-                AccountNo = Guid.NewGuid().ToString().Substring(0, 20),
-                Name = DateTime.Now.ToString("dd-MM-yyyy HH:MM"),
-                Telephone1 = "123456789"
-            });
 
-            await crudRepo.UpdateSingleProperty(accountId, "name", DateTime.Now.ToString("dd-MM-yyyy HH:MM"));
+            await changeTracking.GetChangesAfterLastOperation();
 
-            await crudRepo.ListRecords();
+            //await crudRepo.UpdateRecord(accountId, new AccountModel()
+            //{
+            //    AccountNo = Guid.NewGuid().ToString().Substring(0, 20),
+            //    Name = DateTime.Now.ToString("dd-MM-yyyy HH:MM"),
+            //    Telephone1 = "123456789"
+            //});
 
-            await crudRepo.GetRecord(accountId);
+            //await crudRepo.UpdateSingleProperty(accountId, "name", DateTime.Now.ToString("dd-MM-yyyy HH:MM"));
 
-            await crudRepo.DeleteProperty(accountId, "name");
+            //await crudRepo.ListRecords();
 
-            await crudRepo.Delete(accountId);
+            //await crudRepo.GetRecord(accountId);
+
+            //await crudRepo.DeleteProperty(accountId, "name");
+
+            //await crudRepo.Delete(accountId);
 
             Console.ReadKey();
 
             return 1;
-        }
-
-        /// <summary>
-        /// Get Token
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<string> GetToken()
-        {
-            var authContext = new AuthenticationContext($"https://login.microsoftonline.com/{TenantId}", false);
-            var cred = new ClientCredential(ClientId, ClientSecret);
-            var token = await authContext.AcquireTokenAsync(DataverseUrl, cred);
-
-            Console.WriteLine(token.AccessToken);
-
-            return token.AccessToken;
-        }
-
-        /// <summary>
-        /// Create Http Client
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public static HttpClient CreateClient(string token)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri(DataverseUrl + "/api/data/v9.2/"),
-                Timeout = new TimeSpan(0, 2, 0)    // Standard two minute timeout on web service calls.
-            };
-
-            HttpRequestHeaders headers = client.DefaultRequestHeaders;
-            headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            headers.Add("OData-MaxVersion", "4.0");
-            headers.Add("OData-Version", "4.0");
-            headers.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-            return client;
-        }
-
-        /// <summary>
-        /// Verify Endpoint Working
-        /// </summary>
-        /// <param name="client"></param>
-        /// <returns></returns>
-        public static async Task WhoAmI(HttpClient client)
-        {
-            var response = await client.GetAsync("WhoAmI");
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
 }

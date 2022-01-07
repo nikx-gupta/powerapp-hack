@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PowerAppsConsole.Models
 {
-    public class AccountModel
+    public class AccountModel : BaseEntity
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -19,5 +19,15 @@ namespace PowerAppsConsole.Models
         public string Fax { get; set; }
         [JsonProperty("accountid")]
         public string AccountId { get; set; }
+    }
+
+    public class BaseEntity
+    {
+        [JsonProperty("@odata.context")]
+        public string Context { get; set; }
+        [JsonProperty("reason")]
+        public string Reason { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
     }
 }

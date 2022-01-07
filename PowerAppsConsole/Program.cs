@@ -12,43 +12,69 @@ namespace PowerAppsConsole
 {
     class Program
     {
-        static string ApiUrl = "https://org55054fae.api.crm.dynamics.com";
-        static string clientId = "949414b1-0e94-42f0-8347-f7b21c95dccd";
+        const string DataverseUrl = "https://org55054fae.api.crm.dynamics.com";
+        const string ClientId = "949414b1-0e94-42f0-8347-f7b21c95dccd";
+        const string ClientSecret = "dkk7Q~EcMtBkKH1IsDHUGSEOP3R_oALDy.oFg";
+        const string TenantId = "d1a3d763-f8b9-408b-b481-abacff2764c6";
 
         static async Task<int> Main()
         {
             var token = await GetToken();
             var client = CreateClient(token);
+            var crudRepo = new CrudOperation<AccountModel>(client, "accounts");
 
-            //await InsertAccountRecord(client);
-            // await ListRecords(client);
-            await UpdateAccountRecord(client);
+            string accountId = "426b4262-fd6d-ec11-8943-000d3a37305a";
+
+            await crudRepo.Insert(new AccountModel()
+            {
+                AccountNo = Guid.NewGuid().ToString().Substring(0, 20),
+                Name = DateTime.Now.ToString("dd-MM-yyyy HH:MM"),
+                Telephone1 = "123456789"
+            });
+
+            await crudRepo.UpdateRecord(accountId, new AccountModel()
+            {
+                AccountNo = Guid.NewGuid().ToString().Substring(0, 20),
+                Name = DateTime.Now.ToString("dd-MM-yyyy HH:MM"),
+                Telephone1 = "123456789"
+            });
+
+            await crudRepo.UpdateSingleProperty(accountId, "name", DateTime.Now.ToString("dd-MM-yyyy HH:MM"));
+
+            await crudRepo.ListRecords();
+
+            await crudRepo.GetRecord(accountId);
 
             Console.ReadKey();
 
             return 1;
         }
 
+        /// <summary>
+        /// Get Token
+        /// </summary>
+        /// <returns></returns>
         public static async Task<string> GetToken()
         {
-            // The authentication context used to acquire the web service access token
-            var authContext = new AuthenticationContext(
-                                       "https://login.microsoftonline.com/d1a3d763-f8b9-408b-b481-abacff2764c6", false);
-            //"https://login.microsoftonline.com/common", false);
+            var authContext = new AuthenticationContext($"https://login.microsoftonline.com/{TenantId}", false);
+            var cred = new ClientCredential(ClientId, ClientSecret);
+            var token = await authContext.AcquireTokenAsync(DataverseUrl, cred);
 
-            var cred = new ClientCredential(clientId, "dkk7Q~EcMtBkKH1IsDHUGSEOP3R_oALDy.oFg");
-
-            var token = await authContext.AcquireTokenAsync(ApiUrl, cred);
+            Console.WriteLine(token.AccessToken);
 
             return token.AccessToken;
         }
 
+        /// <summary>
+        /// Create Http Client
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public static HttpClient CreateClient(string token)
         {
             var client = new HttpClient
             {
-                // See https://docs.microsoft.com/en-us/powerapps/developer/data-platform/webapi/compose-http-requests-handle-errors#web-api-url-and-versions
-                BaseAddress = new Uri(ApiUrl + "/api/data/v9.2/"),
+                BaseAddress = new Uri(DataverseUrl + "/api/data/v9.2/"),
                 Timeout = new TimeSpan(0, 2, 0)    // Standard two minute timeout on web service calls.
             };
 
@@ -62,70 +88,44 @@ namespace PowerAppsConsole
             return client;
         }
 
+        /// <summary>
+        /// Verify Endpoint Working
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         public static async Task WhoAmI(HttpClient client)
         {
             var response = await client.GetAsync("WhoAmI");
             Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
 
-        public static async Task UpdateAccountRecord(HttpClient client)
-        {
-            var model = new AccountModel()
-            {
-                AccountNo = "13456798",
-                Name = $"Patch Console Record - {DateTime.Now.ToString("dd-MM-yyyy HH:MM")}",
-                Telephone1 = "0567432"
-            };
+        ///// <summary>
+        ///// Update Account Record
+        ///// </summary>
+        ///// <param name="client"></param>
+        ///// <param name="accountId"></param>
+        ///// <returns></returns>
+        //public static async Task UpdateAccountRecord(HttpClient client, string accountId)
+        //{
+        //    var model = new AccountModel()
+        //    {
+        //        AccountNo = "13456798",
+        //        Name = $"Patch Console Record - {DateTime.Now.ToString("dd-MM-yyyy HH:MM")}",
+        //        Telephone1 = "0567432"
+        //    };
 
-            var accountId = "426b4262-fd6d-ec11-8943-000d3a37305a";
-            client.DefaultRequestHeaders.Add("PREFER", "return=representation");
-            client.DefaultRequestHeaders.Add("If-Match", "*");
-            var result = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"accounts({accountId})")
-            {
-                Content = new StringContent(JsonConvert.SerializeObject(model),System.Text.Encoding.UTF8, "application/json")
-            });
+        //    var accountId = "426b4262-fd6d-ec11-8943-000d3a37305a";
+        //    client.DefaultRequestHeaders.Add("PREFER", "return=representation");
+        //    client.DefaultRequestHeaders.Add("If-Match", "*");
+        //    var result = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"accounts({accountId})")
+        //    {
+        //        Content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json")
+        //    });
 
-            if (!HasFailure(result))
-            {
-                Console.WriteLine(await result.Content.ReadAsStringAsync());
-            }
-        }
-
-        public static async Task InsertAccountRecord(HttpClient client)
-        {
-            var model = new AccountModel()
-            {
-                AccountNo = "234",
-                Name = "Console Record 1",
-                Telephone1 = "123456789"
-            };
-
-            var result = await client.PostAsync("accounts", new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json"));
-            if (!HasFailure(result))
-            {
-                Console.WriteLine(await result.Content.ReadAsStringAsync());
-            }
-        }
-
-        public static async Task ListRecords(HttpClient client)
-        {
-            var result = await client.GetAsync("accounts");
-            if (!HasFailure(result))
-            {
-                Console.WriteLine(await result.Content.ReadAsStringAsync());
-            }
-        }
-
-        public static bool HasFailure(HttpResponseMessage msg)
-        {
-            if (!msg.IsSuccessStatusCode)
-            {
-                Console.WriteLine("Error");
-                Console.WriteLine(msg.Content.ReadAsStringAsync().Result);
-                return true;
-            }
-
-            return false;
-        }
+        //    if (!HasFailure(result))
+        //    {
+        //        Console.WriteLine(await result.Content.ReadAsStringAsync());
+        //    }
+        //}
     }
 }

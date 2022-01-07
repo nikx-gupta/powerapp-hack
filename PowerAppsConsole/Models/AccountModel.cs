@@ -17,5 +17,7 @@ namespace PowerAppsConsole.Models
         public string Telephone1 { get; set; }
         [JsonProperty("fax")]
         public string Fax { get; set; }
+        [JsonProperty("accountid")]
+        public string AccountId { get; set; }
     }
 }

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ChangeTracker.OutputWriters\ChangeTracker.OutputWriters.csproj" />
     <ProjectReference Include="..\Dataverse.Entities\Dataverse.Entities.csproj" />
   </ItemGroup>
 

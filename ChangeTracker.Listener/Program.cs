@@ -1,4 +1,5 @@
 ﻿using ChangeTracker.Listener.Library;
+using ChangeTracker.OutputWriters;
 using Dataverse.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,7 +55,7 @@ namespace ChangeTracker.Listener
                 var msg = await queueClient.ReceiveMessagesAsync(cancellationToken);
                 if (msg.Value.Length > 0)
                 {
-                    using var writer = new CsvOutputWriter<AccountModel>();
+                    using var writer = _serviceProvider.GetService<CsvOutputWriter<AccountModel>>();
                     foreach (var queueMessage in msg.Value)
                     {
                         writer.Write(queueMessage.Body.ToObjectFromJson<AccountModel>());

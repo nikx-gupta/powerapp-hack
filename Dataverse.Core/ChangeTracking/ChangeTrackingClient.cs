@@ -47,7 +47,7 @@ namespace Dataverse.Core.ChangeTracking
             _logger.LogInformation($"Current Change Token: {CurrentChangeToken}");
         }
 
-        public async Task<IEnumerable<T>> GetChangesAfterLastOperation()
+        public async Task<List<T>> GetChangesAfterLastOperation()
         {
             client.AddHeaders((headers) =>
             {
@@ -66,7 +66,7 @@ namespace Dataverse.Core.ChangeTracking
                 return record.Records;
             }
 
-            return Enumerable.Empty<T>();
+            return new List<T>(0);
         }
 
         public bool HasFailure(HttpResponseMessage msg)

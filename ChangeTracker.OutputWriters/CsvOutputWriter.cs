@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace ChangeTracker.Listener.Library
+namespace ChangeTracker.OutputWriters
 {
     public class CsvOutputWriter<T> : IDisposable
     {
         private CsvWriter _writer;
-        public CsvOutputWriter()
+        public CsvOutputWriter(CsvWriterSettings settings)
         {
-            var fileName = $"Delta_{DateTime.Now.ToString("yyyy_MM_dd_hh_mm")}.csv";
+            var fileName = $"Delta_{DateTime.Now.ToString("yyyy-MM-dd_hh_mm")}.csv";
+            if (!Directory.Exists(settings.OutputPath))
+                Directory.CreateDirectory(settings.OutputPath);
+
+            var filePath = Path.Combine(settings.OutputPath, fileName);
             StreamWriter sw;
             var config = new CsvConfiguration(CultureInfo.InvariantCulture);
 
-            if (File.Exists(fileName))
+            if (File.Exists(filePath))
             {
-                sw = new StreamWriter(File.Open(fileName, FileMode.Append));
+                sw = new StreamWriter(File.Open(filePath, FileMode.Append));
                 config.HasHeaderRecord = false;
             }
             else
             {
-                sw = new StreamWriter(File.Create(fileName));
+                sw = new StreamWriter(File.Create(filePath));
             }
 
             _writer = new CsvWriter(sw, config);

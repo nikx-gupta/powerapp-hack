@@ -1,4 +1,4 @@
-﻿using ChangeTracker.Listener.Library;
+﻿using ChangeTracker.OutputWriters;
 using Dataverse.Core;
 using Dataverse.Core.ChangeTracking;
 using Dataverse.Core.Crud;
@@ -19,7 +19,7 @@ namespace ChangeTracker.Poller
                 .ConfigureServices((context, collection) =>
                 {
                     collection.AddHostedService<PowerAppsHost>();
-                    DataverseServiceRegistration.RegisterServices(collection, context.Configuration);
+                    PollerServiceRegistration.RegisterServices(collection, context.Configuration);
                 })
                 .ConfigureLogging((context, logBuilder) =>
                 {
@@ -56,19 +56,20 @@ namespace ChangeTracker.Poller
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var changeTracking = _serviceProvider.GetRequiredService<ChangeTrackingClient<AccountModel>>();
-            
+            var writerSettings = _serviceProvider.GetRequiredService<CsvWriterSettings>();
+
             await changeTracking.GetAllRecords();
 
             while (true)
             {
                 _logger.LogInformation($"Fetching Changes after Last Operation");
                 var deltaRecords = await changeTracking.GetChangesAfterLastOperation();
-                _logger.LogInformation($"Changed Record Count: {deltaRecords.Count()}");
+                _logger.LogInformation($"Changed Record Count: {deltaRecords.Count}");
                 _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
                 _logger.LogInformation($"Next Change Token: {changeTracking.CurrentChangeToken}");
                 if (deltaRecords.Any())
                 {
-                    using var writer = new CsvOutputWriter<AccountModel>();
+                    using var writer = _serviceProvider.GetRequiredService<CsvOutputWriter<AccountModel>>();
                     writer.WriteBatch(deltaRecords.ToList());
                 }
 

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Transactions;
+using ChangeTracker.OutputWriters;
 using Dataverse.Core.ChangeTracking;
 using Dataverse.Core.Configuration;
 using Dataverse.Core.Crud;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Dataverse.Core
 {
-    public static class DataverseServiceRegistration
+    public static class PollerServiceRegistration
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration config)
         {
@@ -29,6 +30,9 @@ namespace Dataverse.Core
 
             services.AddScoped(typeof(ChangeTrackingClient<>));
             services.AddScoped(typeof(CrudOperation<>));
+
+            services.AddSingleton(config.Get<CsvWriterSettings>());
+            services.AddSingleton(typeof(CsvOutputWriter<>));
         }
     }
 }

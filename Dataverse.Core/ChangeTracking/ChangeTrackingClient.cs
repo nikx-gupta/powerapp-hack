@@ -1,19 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Dataverse.Core;
-using Dataverse.Core.Crud;
+﻿using System.Text.RegularExpressions;
 using Dataverse.Entities;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
-namespace PowerAppsConsole
+namespace Dataverse.Core.ChangeTracking
 {
     /// <summary>
     /// Change Tracking for Respective Entity/Table
@@ -42,7 +32,7 @@ namespace PowerAppsConsole
             TableName = tableAttr.Name;
         }
 
-        public async Task GetChangeDelta()
+        public async Task GetAllRecords()
         {
             client.AddHeaders((headers) =>
             {
@@ -57,7 +47,7 @@ namespace PowerAppsConsole
             _logger.LogInformation($"Current Change Token: {CurrentChangeToken}");
         }
 
-        public async Task GetChangesAfterLastOperation()
+        public async Task<IEnumerable<T>> GetChangesAfterLastOperation()
         {
             client.AddHeaders((headers) =>
             {
@@ -69,14 +59,14 @@ namespace PowerAppsConsole
             if (!HasFailure(result))
             {
                 var record = JsonConvert.DeserializeObject<DataverseResponse<T>>(await result.Content.ReadAsStringAsync());
-                _logger.LogInformation($"Changes after Last Operation");
-                _logger.LogInformation(JsonConvert.SerializeObject(record.Records, Formatting.Indented));
-
+                
                 CurentChangeLink = record.DeltaLink;
                 CurrentChangeToken = regexToken.Match(CurentChangeLink)?.Groups["token"].Value;
 
-                _logger.LogInformation($"\nCurrent Change Token: {CurrentChangeToken}");
+                return record.Records;
             }
+
+            return Enumerable.Empty<T>();
         }
 
         public bool HasFailure(HttpResponseMessage msg)

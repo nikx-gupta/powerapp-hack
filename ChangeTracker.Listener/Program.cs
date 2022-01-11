@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using ChangeTracker.Listener.Library;
+﻿using ChangeTracker.Listener.Library;
 using Dataverse.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,7 +50,7 @@ namespace ChangeTracker.Listener
             
             while (true)
             {
-                var msg = await queueClient.ReceiveMessagesAsync();
+                var msg = await queueClient.ReceiveMessagesAsync(cancellationToken);
                 if (msg.Value.Length > 0)
                 {
                     using var writer = new CsvOutputWriter<AccountModel>();
@@ -62,7 +60,7 @@ namespace ChangeTracker.Listener
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
             }
         }
 

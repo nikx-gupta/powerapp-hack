@@ -1,11 +1,12 @@
 ﻿using Dataverse.Core;
+using Dataverse.Core.ChangeTracking;
 using Dataverse.Core.Crud;
 using Dataverse.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PowerAppsConsole;
+using Newtonsoft.Json;
 
 namespace ChangeTracker.Poller
 {
@@ -36,19 +37,35 @@ namespace ChangeTracker.Poller
     public class PowerAppsHost : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<PowerAppsHost> _logger;
 
-        public PowerAppsHost(IServiceProvider serviceProvider)
+        public PowerAppsHost(IServiceProvider serviceProvider, ILogger<PowerAppsHost> logger)
         {
             _serviceProvider = serviceProvider;
+            _logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            var changeTracking = _serviceProvider.GetRequiredService<ChangeTrackingClient<AccountModel>>();
+            
+            await changeTracking.GetAllRecords();
+
+            while (true)
+            {
+                _logger.LogInformation($"Fetching Changes after Last Operation");
+                var deltaRecords = await changeTracking.GetChangesAfterLastOperation();
+                _logger.LogInformation($"Changed Record Count: {deltaRecords.Count()}");
+                _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
+                _logger.LogInformation($"Next Change Token: {changeTracking.CurrentChangeToken}");
+
+                await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+            }
 
             //var crudRepo = _serviceProvider.GetRequiredService<CrudOperation<AccountModel>>();
             //var changeTracking = _serviceProvider.GetRequiredService<ChangeTrackingClient<AccountModel>>();
 
-            //await changeTracking.GetChangeDelta();
+            //await changeTracking.GetAllRecords();
 
             //var rec = await crudRepo.Insert(new AccountModel()
             //{

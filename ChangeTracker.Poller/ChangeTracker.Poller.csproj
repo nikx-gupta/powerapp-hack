@@ -22,6 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\ChangeTracker.Listener.Library\ChangeTracker.Listener.Library.csproj" />
 		<ProjectReference Include="..\Dataverse.Core\Dataverse.Core.csproj" />
 		<ProjectReference Include="..\Dataverse.Entities\Dataverse.Entities.csproj" />
 	</ItemGroup>

@@ -19,6 +19,7 @@ namespace ChangeTracker.Listener
                 })
                 .ConfigureLogging((context, logBuilder) =>
                 {
+                    logBuilder.AddConfiguration(context.Configuration);
                     logBuilder.AddConsole();
                 })
                 .ConfigureAppConfiguration((hostContext, builder) =>

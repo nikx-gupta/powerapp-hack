@@ -1,4 +1,5 @@
-﻿using Dataverse.Core;
+﻿using ChangeTracker.Listener.Library;
+using Dataverse.Core;
 using Dataverse.Core.ChangeTracking;
 using Dataverse.Core.Crud;
 using Dataverse.Entities;
@@ -18,10 +19,17 @@ namespace ChangeTracker.Poller
                 .ConfigureServices((context, collection) =>
                 {
                     collection.AddHostedService<PowerAppsHost>();
-                    collection.RegisterServices(context.Configuration);
+                    DataverseServiceRegistration.RegisterServices(collection, context.Configuration);
                 })
                 .ConfigureLogging((context, logBuilder) =>
                 {
+                    logBuilder.AddFilter((cat, level) =>
+                    {
+                        if (cat.StartsWith("System.Net.Http"))
+                            return false;
+
+                        return true;
+                    });
                     logBuilder.AddConsole();
                 })
                 .ConfigureAppConfiguration((hostContext, builder) =>
@@ -58,6 +66,11 @@ namespace ChangeTracker.Poller
                 _logger.LogInformation($"Changed Record Count: {deltaRecords.Count()}");
                 _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
                 _logger.LogInformation($"Next Change Token: {changeTracking.CurrentChangeToken}");
+                if (deltaRecords.Any())
+                {
+                    using var writer = new CsvOutputWriter<AccountModel>();
+                    writer.WriteBatch(deltaRecords.ToList());
+                }
 
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }

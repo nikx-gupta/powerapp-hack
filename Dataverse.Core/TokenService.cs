@@ -31,8 +31,6 @@ namespace Dataverse.Core
             var cred = new ClientCredential(Settings.ClientId, Settings.ClientSecret);
             var token = await _context.AcquireTokenAsync(Settings.DataverseUrl, cred);
 
-            Console.WriteLine(token.ExpiresOn);
-
             return token.AccessToken;
         }
     }

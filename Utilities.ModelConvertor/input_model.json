@@ -1,0 +1,21 @@
+{
+  "@odata.etag": "W/\"1912704\"",
+  "_organizationid_value": "9d67db83-49c9-4f35-ad1b-02dc3bfb7aad",
+  "statecode": 0,
+  "statuscode": 1,
+  "_createdby_value": "5ae09c68-2117-ec11-b6e6-001dd802e732",
+  "_ccwis_race_value": "aad3db80-b4e6-e911-a962-000d3a36e9be",
+  "_ccwis_person_dyncontact_value": "a84310d5-bcc3-eb11-bacd-001dd80202f5",
+  "createdon": "2021-10-27T16:33:50Z",
+  "modifiedon": "2021-10-27T16:33:54Z",
+  "_modifiedby_value": "5ae09c68-2117-ec11-b6e6-001dd802e732",
+  "versionnumber": 1912704,
+  "ccwis_person_raceid": "67e023a9-4337-ec11-b6e5-001dd800c572",
+  "ccwis_personracecomposite": null,
+  "utcconversiontimezonecode": null,
+  "overriddencreatedon": null,
+  "importsequencenumber": null,
+  "_createdonbehalfby_value": null,
+  "timezoneruleversionnumber": null,
+  "_modifiedonbehalfby_value": null
+}

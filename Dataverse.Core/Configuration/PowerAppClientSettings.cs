@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace PowerAppsConsole
+namespace Dataverse.Core.Configuration
 {
     public class PowerAppClientSettings
     {

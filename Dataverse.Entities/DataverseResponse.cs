@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace PowerAppsConsole.Models
+namespace Dataverse.Entities
 {
     public class DataverseResponse<T>
     {

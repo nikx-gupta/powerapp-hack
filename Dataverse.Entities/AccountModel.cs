@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PowerAppsConsole.Models
+namespace Dataverse.Entities
 {
+    [DataverseTable(Name = "accounts")]
     public class AccountModel : BaseEntity
     {
         [JsonProperty("name")]

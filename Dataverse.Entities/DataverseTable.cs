@@ -1,4 +1,6 @@
-﻿namespace Dataverse.Entities
+﻿using System;
+
+namespace Dataverse.Entities
 {
     public class DataverseTable : Attribute
     {

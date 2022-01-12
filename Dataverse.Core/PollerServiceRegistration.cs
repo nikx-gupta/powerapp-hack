@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System;
+using System.Net.Http.Headers;
 using System.Transactions;
 using ChangeTracker.OutputWriters;
 using Dataverse.Core.ChangeTracking;

@@ -1,5 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Dataverse.Core.Configuration;
 
 namespace Dataverse.Core;

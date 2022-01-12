@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using Dataverse.Entities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

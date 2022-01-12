@@ -69,7 +69,7 @@ namespace ChangeTracker.Poller
                 _logger.LogInformation($"Next Change Token: {changeTracking.CurrentChangeToken}");
                 if (deltaRecords.Any())
                 {
-                    using var writer = _serviceProvider.GetRequiredService<CsvOutputWriter<AccountModel>>();
+                    using var writer = _serviceProvider.GetRequiredService<SqlWriter<AccountModel>>();
                     writer.WriteBatch(deltaRecords.ToList());
                 }
 

@@ -33,6 +33,9 @@ namespace Dataverse.Core
 
             services.AddSingleton(config.Get<CsvWriterSettings>());
             services.AddSingleton(typeof(CsvOutputWriter<>));
+
+            services.AddSingleton(config.Get<SqlWriterSettings>());
+            services.AddSingleton(typeof(SqlWriter<>));
         }
     }
 }

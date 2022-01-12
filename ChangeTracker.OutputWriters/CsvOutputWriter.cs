@@ -42,7 +42,6 @@ namespace ChangeTracker.OutputWriters
 
         public void Dispose()
         {
-            _writer.Flush();
             _writer.Dispose();
         }
     }

@@ -32,7 +32,7 @@ namespace Dataverse.Core.ChangeTracking
             TableName = tableAttr.Name;
         }
 
-        public async Task GetAllRecords()
+        public async Task<List<T>> GetAllRecords()
         {
             client.AddHeaders((headers) =>
             {
@@ -45,6 +45,8 @@ namespace Dataverse.Core.ChangeTracking
             CurrentChangeToken = regexToken.Match(CurentChangeLink)?.Groups["token"].Value;
 
             _logger.LogInformation($"Current Change Token: {CurrentChangeToken}");
+
+            return record.Records;
         }
 
         public async Task<List<T>> GetChangesAfterLastOperation()

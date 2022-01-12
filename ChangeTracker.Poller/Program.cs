@@ -57,8 +57,10 @@ namespace ChangeTracker.Poller
         {
             var changeTracking = _serviceProvider.GetRequiredService<ChangeTrackingClient<AccountModel>>();
             var writerSettings = _serviceProvider.GetRequiredService<CsvWriterSettings>();
+            using var writer = _serviceProvider.GetRequiredService<QueueWriter>();
 
-            await changeTracking.GetAllRecords();
+            var allRecords = await changeTracking.GetAllRecords();
+            writer.WriteBatch(allRecords);
 
             while (true)
             {
@@ -69,7 +71,6 @@ namespace ChangeTracker.Poller
                 _logger.LogInformation($"Next Change Token: {changeTracking.CurrentChangeToken}");
                 if (deltaRecords.Any())
                 {
-                    using var writer = _serviceProvider.GetRequiredService<SqlWriter<AccountModel>>();
                     writer.WriteBatch(deltaRecords.ToList());
                 }
 

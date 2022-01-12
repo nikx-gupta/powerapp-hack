@@ -49,7 +49,7 @@ namespace ChangeTracker.Listener
             _logger.LogInformation("Listening For Update Tracking Messages");
 
             var queueClient = _serviceProvider.GetService<Azure.Storage.Queues.QueueClient>();
-            
+
             while (true)
             {
                 var msg = await queueClient.ReceiveMessagesAsync(cancellationToken);
@@ -58,7 +58,8 @@ namespace ChangeTracker.Listener
                     using var writer = _serviceProvider.GetService<CsvOutputWriter<AccountModel>>();
                     foreach (var queueMessage in msg.Value)
                     {
-                        writer.Write(queueMessage.Body.ToObjectFromJson<AccountModel>());
+                        writer.WriteBatch(queueMessage.Body.ToObjectFromJson<List<AccountModel>>());
+                        await queueClient.DeleteMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, cancellationToken);
                     }
                 }
 

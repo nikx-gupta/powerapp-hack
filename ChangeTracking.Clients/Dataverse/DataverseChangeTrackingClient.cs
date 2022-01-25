@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ChangeTracking.Core.Helpers;
 using ChangeTracking.Entities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -25,13 +26,7 @@ namespace ChangeTracking.Clients.Dataverse
         public DataverseChangeTrackingClient(DataverseServiceClient serviceClient, ILogger<DataverseChangeTrackingClient<T>> logger) : base(logger)
         {
             this._serviceClient = serviceClient;
-            var tableAttr = (DataverseTable)Attribute.GetCustomAttribute(typeof(T), typeof(DataverseTable))!;
-            if (tableAttr == null)
-            {
-                throw new Exception($"DataverseTable Attribute is required on Model {typeof(T).Name}");
-            }
-
-            TableName = tableAttr.Name;
+            TableName = AttributeHelper.GetAttributeName<DataverseTable, T>(true).Name;
         }
 
         public async Task<List<T>> GetAllRecords()

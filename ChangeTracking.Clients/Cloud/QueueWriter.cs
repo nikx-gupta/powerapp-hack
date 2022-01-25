@@ -15,7 +15,7 @@ namespace ChangeTracking.Clients.Cloud
             _writer = queueClient;
         }
 
-        public void Write<T>(T objData)
+        public void Write<T>(T objData) where T : class
         {
             _writer.SendMessage(BinaryData.FromObjectAsJson(objData, new JsonSerializerOptions()
             {
@@ -23,7 +23,7 @@ namespace ChangeTracking.Clients.Cloud
             }));
         }
 
-        public void WriteBatch<T>(List<T> data)
+        public void WriteBatch<T>(List<T> data) where T : class
         {
             _writer.SendMessage(BinaryData.FromObjectAsJson(data, new JsonSerializerOptions()
             {

@@ -24,14 +24,16 @@ namespace ChangeTracking.Clients.Sql
         public DateTime LastModifiedDate { get; private set; }
         private SqlConnection _reader;
 
-        public SqlChangeTrackingClient(SqlConnection settings, ILogger<SqlChangeTrackingClient<T>> logger) : base(logger)
+        public SqlChangeTrackingClient(SqlConnection connection, ILogger<SqlChangeTrackingClient<T>> logger) : base(logger)
         {
+            _reader = connection;
             var tableAttr = AttributeHelper.GetAttributeName<DataverseTable, T>(isRequired: true);
             var modifiedDate = AttributeHelper.GetAttributeName<ChangeTrackingModifiedDate, T>(isRequired: true);
 
             TableName = tableAttr.Name;
             ModifiedDateColumnName = modifiedDate.Name;
-        }
+            LastModifiedDate = DateTime.Today.AddDays(-30);
+;        }
 
         public async Task<List<T>> GetAllRecords()
         {

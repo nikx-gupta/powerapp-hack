@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace ChangeTracker.Poller;
 
-public class PollerService<T> : IHostedService
+public class PollerService<T> : IHostedService where T : class
 {
     private readonly PollerServiceSettings _settings;
     private readonly IChangeTrackingClient<T> _trackingClient;
@@ -38,17 +38,16 @@ public class PollerService<T> : IHostedService
 
         while (true)
         {
-            var writer = _writerFactory.Instance();
             _logger.LogInformation($"Fetching Changes after Last Operation");
             var deltaRecords = await _trackingClient.GetDeltaChanges();
             _logger.LogInformation($"Changed Record Count: {deltaRecords.Count}");
             _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
             if (deltaRecords.Any())
             {
+                var writer = _writerFactory.Instance();
                 writer.WriteBatch(deltaRecords.ToList());
+                _writerFactory.Flush();
             }
-
-            _writerFactory.Flush();
 
             await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
         }

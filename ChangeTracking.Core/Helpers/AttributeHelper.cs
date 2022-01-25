@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Configuration;
 
 namespace ChangeTracking.Core.Helpers
 {
@@ -10,10 +11,20 @@ namespace ChangeTracking.Core.Helpers
             var attribute = (TAttribute) Attribute.GetCustomAttribute(typeof(TModel), typeof(TAttribute))!;
             if (isRequired && attribute == null)
             {
-                throw new Exception($"Attribute is required on Model {typeof(TModel).Name}");
+                throw new Exception($"{typeof(TAttribute).Name} is required on Model {typeof(TModel).Name}");
             }
 
             return attribute;
+        }
+    }
+
+    public static class ConfigurationHelper
+    {
+        public static TModel GetSettings<TModel>(this IConfiguration config)
+        {
+            var objInst = Activator.CreateInstance<TModel>();
+            config.GetSection(typeof(TModel).Name).Bind(objInst);
+            return objInst;
         }
     }
 }

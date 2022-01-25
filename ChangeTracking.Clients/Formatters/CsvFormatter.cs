@@ -35,12 +35,12 @@ namespace ChangeTracking.Clients.Formatters
             _writer = new CsvWriter(sw, config);
         }
 
-        public void Write<T>(T objData)
+        public void Write<T>(T objData) where T : class
         {
             _writer.WriteRecord(objData);
         }
 
-        public void WriteBatch<T>(List<T> data)
+        public void WriteBatch<T>(List<T> data) where T : class
         {
             _writer.WriteRecords(data);
         }

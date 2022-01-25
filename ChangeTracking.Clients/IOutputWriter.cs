@@ -5,7 +5,7 @@ namespace ChangeTracking.Clients
 {
     public interface IOutputWriter : IDisposable
     {
-        void Write<T>(T objData);
-        void WriteBatch<T>(List<T> data);
+        void Write<T>(T objData) where T : class;
+        void WriteBatch<T>(List<T> data) where T : class;
     }
 }

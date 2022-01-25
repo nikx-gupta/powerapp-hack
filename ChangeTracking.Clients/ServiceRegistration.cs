@@ -37,14 +37,14 @@ namespace ChangeTracking.Clients
         public static void RegisterSqlWriter(this IServiceCollection services, SqlWriterSettings config)
         {
             services.AddSingleton(config);
-            services.AddTransient(typeof(SqlWriter<>));
+            services.AddTransient<IOutputWriter, SqlWriter>();
             services.TryAddSingleton<OutputWriterFactory>();
         }
 
         public static void RegisterQueueWriter(this IServiceCollection services, QueueClientConfig config)
         {
             services.AddSingleton<QueueClient>(provider => new QueueClient(config.QueueConnectionString, config.QueueName));
-            services.AddTransient(typeof(QueueWriter));
+            services.AddTransient<IOutputWriter, QueueWriter>();
             services.TryAddSingleton<OutputWriterFactory>();
         }
 
@@ -52,7 +52,7 @@ namespace ChangeTracking.Clients
         {
             services.AddSingleton(writerSettings);
             services.TryAddSingleton<OutputWriterFactory>();
-            services.AddTransient<CsvFormatter>();
+            services.AddTransient<IOutputWriter, CsvFormatter>();
         }
 
         public static void RegisterDataverseChangeTracking<T>(this IServiceCollection services, PowerAppTokenSettings settings)

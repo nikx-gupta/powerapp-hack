@@ -4,6 +4,6 @@ namespace ChangeTracking.Entities
 {
     public interface ISqlTrackingEntity
     {
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime LastModifiedDate { get; }
     }
 }

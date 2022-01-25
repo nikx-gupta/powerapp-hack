@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
 
 namespace ChangeTracking.Entities
 {
     [DataverseTable(Name = "accounts")]
+    [ChangeTrackingModifiedDate(Name = "ModifiedDate")]
     public class AccountModel : BaseEntity, ISqlTrackingEntity
     {
         [JsonProperty("name")]
@@ -16,7 +19,9 @@ namespace ChangeTracking.Entities
         public string Fax { get; set; }
         [JsonProperty("accountid")]
         public string AccountId { get; set; }
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
+        [Write(false)]
+        public DateTime LastModifiedDate => ModifiedDate;
     }
 
     public class BaseEntity

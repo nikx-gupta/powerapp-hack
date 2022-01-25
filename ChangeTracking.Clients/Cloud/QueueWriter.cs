@@ -7,12 +7,12 @@ using ChangeTracking.Clients.Configuration;
 
 namespace ChangeTracking.Clients.Cloud
 {
-    public class QueueWriter : IDisposable
+    public class QueueWriter
     {
         private QueueClient _writer;
-        public QueueWriter(QueueWriterSettings settings)
+        public QueueWriter(QueueClient queueClient)
         {
-            _writer = new QueueClient(settings.QueueConnectionString, settings.QueueName);
+            _writer = queueClient;
         }
 
         public void Write<T>(T objData)
@@ -29,11 +29,6 @@ namespace ChangeTracking.Clients.Cloud
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             }));
-        }
-
-        public void Dispose()
-        {
-            
         }
     }
 }

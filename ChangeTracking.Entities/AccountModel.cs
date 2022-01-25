@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace ChangeTracking.Entities
 {
     [DataverseTable(Name = "accounts")]
-    public class AccountModel : BaseEntity
+    public class AccountModel : BaseEntity, ISqlTrackingEntity
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -15,6 +16,7 @@ namespace ChangeTracking.Entities
         public string Fax { get; set; }
         [JsonProperty("accountid")]
         public string AccountId { get; set; }
+        public DateTime LastModifiedDate { get; set; }
     }
 
     public class BaseEntity

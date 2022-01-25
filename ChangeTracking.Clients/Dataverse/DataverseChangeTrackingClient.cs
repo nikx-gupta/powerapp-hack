@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using ChangeTracking.Entities;
 using Microsoft.Extensions.Logging;
@@ -13,20 +13,18 @@ namespace ChangeTracking.Clients.Dataverse
     /// Change Tracking for Respective Entity/Table
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class DataverseChangeTrackingClient<T>
+    public class DataverseChangeTrackingClient<T> : ChangeTrackingClientBase, IChangeTrackingClient<T>
     {
         private readonly Regex regexToken = new Regex("\\$deltatoken=(?<token>.+)", RegexOptions.Compiled);
         private readonly DataverseClient client;
-        private readonly ILogger<DataverseChangeTrackingClient<T>> _logger;
 
         public string TableName { get; }
         public string CurentChangeLink { get; private set; }
         public string CurrentChangeToken { get; private set; }
 
-        public DataverseChangeTrackingClient(DataverseClient client, ILogger<DataverseChangeTrackingClient<T>> logger)
+        public DataverseChangeTrackingClient(DataverseClient client, ILogger<DataverseChangeTrackingClient<T>> logger) : base(logger)
         {
             this.client = client;
-            _logger = logger;
             var tableAttr = (DataverseTable)Attribute.GetCustomAttribute(typeof(T), typeof(DataverseTable))!;
             if (tableAttr == null)
             {
@@ -53,7 +51,7 @@ namespace ChangeTracking.Clients.Dataverse
             return record.Records;
         }
 
-        public async Task<List<T>> GetChangesAfterLastOperation()
+        public async Task<List<T>> GetDeltaChanges()
         {
             client.AddHeaders((headers) =>
             {
@@ -74,22 +72,5 @@ namespace ChangeTracking.Clients.Dataverse
 
             return new List<T>(0);
         }
-
-        public bool HasFailure(HttpResponseMessage msg)
-        {
-            if (!msg.IsSuccessStatusCode)
-            {
-                _logger.LogInformation("Error");
-                _logger.LogInformation(msg.Content.ReadAsStringAsync().Result);
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    public class SqlConnectionSettings
-    {
-        public string SourceConnectionString { get; set; }
     }
 }

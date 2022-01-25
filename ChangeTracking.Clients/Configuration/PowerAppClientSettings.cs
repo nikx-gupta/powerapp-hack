@@ -10,4 +10,9 @@
 
         public string TenantId { get; set; }
     }
+
+    public class SqlChangeTrackingSettings
+    {
+        public string SourceConnectionString { get; set; }
+    }
 }

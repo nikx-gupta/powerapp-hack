@@ -58,9 +58,10 @@ namespace ChangeTracker.Poller
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            //var changeTracking = _serviceProvider.GetRequiredService<DataverseChangeTrackingClient<AccountModel>>();
             var changeTracking = _serviceProvider.GetRequiredService<DataverseChangeTrackingClient<AccountModel>>();
             var writerSettings = _serviceProvider.GetRequiredService<CsvWriterSettings>();
-            using var writer = _serviceProvider.GetRequiredService<QueueWriter>();
+            var writer = _serviceProvider.GetRequiredService<QueueWriter>();
 
             var allRecords = await changeTracking.GetAllRecords();
             writer.WriteBatch(allRecords);
@@ -68,7 +69,7 @@ namespace ChangeTracker.Poller
             while (true)
             {
                 _logger.LogInformation($"Fetching Changes after Last Operation");
-                var deltaRecords = await changeTracking.GetChangesAfterLastOperation();
+                var deltaRecords = await changeTracking.GetDeltaChanges();
                 _logger.LogInformation($"Changed Record Count: {deltaRecords.Count}");
                 _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
                 _logger.LogInformation($"Next Change Token: {changeTracking.CurrentChangeToken}");

@@ -3,7 +3,9 @@ using System.Net.Http.Headers;
 using ChangeTracking.Clients;
 using ChangeTracking.Clients.Configuration;
 using ChangeTracking.Clients.Dataverse;
+using ChangeTracking.Clients.Sql;
 using ChangeTracking.Core;
+using ChangeTracking.Entities;
 using Dataverse.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,10 +30,12 @@ namespace ChangeTracker.Poller
                     new MediaTypeWithQualityHeaderValue("application/json"));
             }).AddHttpMessageHandler<TokenHandler>();
 
-            services.AddScoped(typeof(DataverseChangeTrackingClient<>));
+            //services.AddScoped<IChangeTrackingClient<AccountModel>, DataverseChangeTrackingClient<AccountModel>>();
+            services.AddScoped<IChangeTrackingClient<AccountModel>, SqlChangeTrackingClient<AccountModel>>();
             services.AddScoped(typeof(DataverseCrudWriter<>));
 
-           services.RegisterWriters(config);
+           services.RegisterSqlWriters(config);
+           services.RegisterSqlChangeTracking(config);
         }
     }
 }

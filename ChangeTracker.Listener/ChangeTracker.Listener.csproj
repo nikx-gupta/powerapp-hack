@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChangeTracker.Listener.Library\ChangeTracker.Listener.Library.csproj" />
+    <ProjectReference Include="..\ChangeTracking.Clients\ChangeTracking.Clients.csproj" />
   </ItemGroup>
 
 </Project>

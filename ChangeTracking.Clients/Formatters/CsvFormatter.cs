@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using ChangeTracking.Clients.Cloud;
 using ChangeTracking.Clients.Configuration;
 using CsvHelper;
 using CsvHelper.Configuration;
 
 namespace ChangeTracking.Clients.Formatters
 {
-    public class CsvFormatter<T> : IDisposable
+    public class CsvFormatter : IOutputWriter
     {
         private CsvWriter _writer;
         public CsvFormatter(CsvWriterSettings settings)
@@ -34,17 +35,17 @@ namespace ChangeTracking.Clients.Formatters
             _writer = new CsvWriter(sw, config);
         }
 
-        public void Write(T objData)
+        public void Write<T>(T objData)
         {
             _writer.WriteRecord(objData);
         }
 
-        public void WriteBatch(List<T> data)
+        public void WriteBatch<T>(List<T> data)
         {
             _writer.WriteRecords(data);
         }
 
-        public void Dispose()
+        public void Flush()
         {
             _writer.Dispose();
         }

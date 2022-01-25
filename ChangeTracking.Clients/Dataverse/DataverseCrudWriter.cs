@@ -10,7 +10,7 @@ namespace ChangeTracking.Clients.Dataverse
 {
     public class DataverseCrudWriter<T>
     {
-        private readonly DataverseClient _client;
+        private readonly DataverseServiceClient _serviceClient;
         private readonly ILogger<DataverseCrudWriter<T>> _logger;
         public string TableName { get; }
 
@@ -19,9 +19,9 @@ namespace ChangeTracking.Clients.Dataverse
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public DataverseCrudWriter(DataverseClient client, ILogger<DataverseCrudWriter<T>> logger)
+        public DataverseCrudWriter(DataverseServiceClient serviceClient, ILogger<DataverseCrudWriter<T>> logger)
         {
-            _client = client;
+            _serviceClient = serviceClient;
             _logger = logger;
             var tableAttr = (DataverseTable)Attribute.GetCustomAttribute(typeof(T), typeof(DataverseTable))!;
             if (tableAttr == null)
@@ -34,13 +34,13 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task UpdateRecord(string primaryKey, T model)
         {
-            _client.AddHeaders((headers) =>
+            _serviceClient.AddHeaders((headers) =>
             {
                 headers.Add("PREFER", "return=representation");
                 headers.Add("If-Match", "*");
             });
 
-            var result = await _client.Client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"{TableName}({primaryKey})")
+            var result = await _serviceClient.Client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), $"{TableName}({primaryKey})")
             {
                 Content = new StringContent(JsonConvert.SerializeObject(model, settings), Encoding.UTF8, "application/json")
             });
@@ -55,7 +55,7 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task ListRecords()
         {
-            var result = await _client.Client.GetAsync(TableName);
+            var result = await _serviceClient.Client.GetAsync(TableName);
             if (!HasFailure(result))
             {
                 var record = JsonConvert.DeserializeObject<DataverseResponse<T>>(await result.Content.ReadAsStringAsync());
@@ -65,7 +65,7 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task GetRecord(string primaryKey)
         {
-            var result = await _client.Client.GetAsync($"{TableName}({primaryKey})");
+            var result = await _serviceClient.Client.GetAsync($"{TableName}({primaryKey})");
             if (!HasFailure(result))
             {
                 var record = JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync());
@@ -75,13 +75,13 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task UpdateSingleProperty(string primaryKey, string propertyName, string propertyValue)
         {
-            _client.AddHeaders((headers) =>
+            _serviceClient.AddHeaders((headers) =>
             {
                 headers.Add("PREFER", "return=representation");
                 headers.Add("If-Match", "*");
             });
 
-            var result = await _client.Client.PutAsync($"{TableName}({primaryKey})/{propertyName}", new StringContent(JsonConvert.SerializeObject(new
+            var result = await _serviceClient.Client.PutAsync($"{TableName}({primaryKey})/{propertyName}", new StringContent(JsonConvert.SerializeObject(new
             {
                 value = propertyValue
             }, settings), Encoding.UTF8, "application/json"));
@@ -95,12 +95,12 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task<T> Insert(T model)
         {
-            _client.AddHeaders((headers) =>
+            _serviceClient.AddHeaders((headers) =>
             {
                 headers.Add("PREFER", "return=representation");
             });
 
-            var result = await _client.Client.PostAsync(TableName, new StringContent(JsonConvert.SerializeObject(model, settings), Encoding.UTF8, "application/json"));
+            var result = await _serviceClient.Client.PostAsync(TableName, new StringContent(JsonConvert.SerializeObject(model, settings), Encoding.UTF8, "application/json"));
             if (!HasFailure(result))
             {
                 var record = JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync());
@@ -115,7 +115,7 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task Delete(string primaryKey)
         {
-            var result = await _client.Client.DeleteAsync($"{TableName}({primaryKey})");
+            var result = await _serviceClient.Client.DeleteAsync($"{TableName}({primaryKey})");
             if (!HasFailure(result) && result.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
                 _logger.LogInformation($"Deleted Record with Key :{primaryKey}");
@@ -124,7 +124,7 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task DeleteProperty(string primaryKey, string propertyName)
         {
-            var result = await _client.Client.DeleteAsync($"{TableName}({primaryKey})/{propertyName}");
+            var result = await _serviceClient.Client.DeleteAsync($"{TableName}({primaryKey})/{propertyName}");
             if (!HasFailure(result) && result.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
                 _logger.LogInformation($"Deleted Record with Key :{primaryKey}");

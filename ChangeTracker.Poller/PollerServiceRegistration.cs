@@ -9,33 +9,21 @@ using ChangeTracking.Entities;
 using Dataverse.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace ChangeTracker.Poller
 {
     public static class PollerServiceRegistration
     {
-        public static void RegisterServices(this IServiceCollection services, IConfiguration config)
+        public static void RegisterPoller(this IServiceCollection services, IConfiguration config)
         {
-            services.AddSingleton(provider => config.Get<PowerAppClientSettings>());
-            services.AddSingleton<TokenService>();
-            services.AddTransient<DataverseClient>();
-            services.AddTransient<TokenHandler>();
+            services.RegisterSqlChangeTracking<AccountModel>(config.Get<SqlChangeTrackingSettings>());
+            services.RegisterCsvFormatter(config.Get<CsvWriterSettings>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IHostedService), typeof(PollerService<>)));
 
-            services.AddHttpClient<DataverseClient>((svcProvider, client) =>
-            {
-                var settings = svcProvider.GetService<PowerAppClientSettings>();
-                client.BaseAddress = new Uri(settings.DataverseUrl + "/api/data/v9.2/");
-                client.Timeout = new TimeSpan(0, 2, 0);
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-            }).AddHttpMessageHandler<TokenHandler>();
-
-            //services.AddScoped<IChangeTrackingClient<AccountModel>, DataverseChangeTrackingClient<AccountModel>>();
-            services.AddScoped<IChangeTrackingClient<AccountModel>, SqlChangeTrackingClient<AccountModel>>();
-            services.AddScoped(typeof(DataverseCrudWriter<>));
-
-           services.RegisterSqlWriters(config);
-           services.RegisterSqlChangeTracking(config);
+            // services.RegisterDataverseClient(config.Get<PowerAppTokenSettings>());
+            // services.RegisterSqlWriters(config);
         }
     }
 }

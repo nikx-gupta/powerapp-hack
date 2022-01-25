@@ -16,15 +16,15 @@ namespace ChangeTracking.Clients.Dataverse
     public class DataverseChangeTrackingClient<T> : ChangeTrackingClientBase, IChangeTrackingClient<T>
     {
         private readonly Regex regexToken = new Regex("\\$deltatoken=(?<token>.+)", RegexOptions.Compiled);
-        private readonly DataverseClient client;
+        private readonly DataverseServiceClient _serviceClient;
 
         public string TableName { get; }
         public string CurentChangeLink { get; private set; }
         public string CurrentChangeToken { get; private set; }
 
-        public DataverseChangeTrackingClient(DataverseClient client, ILogger<DataverseChangeTrackingClient<T>> logger) : base(logger)
+        public DataverseChangeTrackingClient(DataverseServiceClient serviceClient, ILogger<DataverseChangeTrackingClient<T>> logger) : base(logger)
         {
-            this.client = client;
+            this._serviceClient = serviceClient;
             var tableAttr = (DataverseTable)Attribute.GetCustomAttribute(typeof(T), typeof(DataverseTable))!;
             if (tableAttr == null)
             {
@@ -36,12 +36,12 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task<List<T>> GetAllRecords()
         {
-            client.AddHeaders((headers) =>
+            _serviceClient.AddHeaders((headers) =>
             {
                 headers.Add("PREFER", "odata.track-changes");
             });
 
-            var result = await client.Client.GetAsync(TableName);
+            var result = await _serviceClient.Client.GetAsync(TableName);
             var record = JsonConvert.DeserializeObject<DataverseResponse<T>>(await result.Content.ReadAsStringAsync());
             CurentChangeLink = record.DeltaLink;
             CurrentChangeToken = regexToken.Match(CurentChangeLink)?.Groups["token"].Value;
@@ -53,12 +53,12 @@ namespace ChangeTracking.Clients.Dataverse
 
         public async Task<List<T>> GetDeltaChanges()
         {
-            client.AddHeaders((headers) =>
+            _serviceClient.AddHeaders((headers) =>
             {
                 headers.Add("PREFER", "odata.track-changes");
             });
 
-            var result = await client.Client.GetAsync($"{TableName}?$deltatoken={CurrentChangeToken}");
+            var result = await _serviceClient.Client.GetAsync($"{TableName}?$deltatoken={CurrentChangeToken}");
 
             if (!HasFailure(result))
             {
@@ -66,6 +66,7 @@ namespace ChangeTracking.Clients.Dataverse
 
                 CurentChangeLink = record.DeltaLink;
                 CurrentChangeToken = regexToken.Match(CurentChangeLink)?.Groups["token"].Value;
+                _logger.LogInformation($"Next Change Token: {CurrentChangeToken}");
 
                 return record.Records;
             }

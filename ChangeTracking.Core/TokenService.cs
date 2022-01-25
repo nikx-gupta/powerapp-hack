@@ -10,13 +10,13 @@ namespace ChangeTracking.Core
     public class TokenService
     {
         private readonly AuthenticationContext _context;
-        public TokenService(AzureClientSettings settings)
+        public TokenService(AzureTokenSettings settings)
         {
             Settings = settings;
             _context = new AuthenticationContext($"https://login.microsoftonline.com/{Settings.TenantId}", false);
         }
 
-        public AzureClientSettings Settings { get; }
+        public AzureTokenSettings Settings { get; }
 
         /// <summary>
         /// Get Token
@@ -25,7 +25,7 @@ namespace ChangeTracking.Core
         public async Task<string> GetAccessToken()
         {
             var cred = new ClientCredential(Settings.ClientId, Settings.ClientSecret);
-            var token = await _context.AcquireTokenAsync(Settings.DataverseUrl, cred);
+            var token = await _context.AcquireTokenAsync(Settings.ResourceUrl, cred);
 
             return token.AccessToken;
         }

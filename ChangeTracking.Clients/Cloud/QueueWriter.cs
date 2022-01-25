@@ -7,7 +7,7 @@ using ChangeTracking.Clients.Configuration;
 
 namespace ChangeTracking.Clients.Cloud
 {
-    public class QueueWriter
+    public class QueueWriter : IOutputWriter
     {
         private QueueClient _writer;
         public QueueWriter(QueueClient queueClient)
@@ -29,6 +29,11 @@ namespace ChangeTracking.Clients.Cloud
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             }));
+        }
+
+        public void Flush()
+        {
+            // Not Required Flush    
         }
     }
 }

@@ -11,7 +11,7 @@ namespace ChangeTracker.Listener
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration config)
         {
-            services.RegisterQueueClient(config);
+            services.RegisterQueueWriter(config);
             services.RegisterCsvFormatter(config);
         }
     }

@@ -7,18 +7,18 @@ using ChangeTracking.Clients.Configuration;
 
 namespace ChangeTracking.Clients.Dataverse
 {
-    public class DataverseClient
+    public class DataverseServiceClient
     {
         private HttpClient _client;
 
-        public DataverseClient(HttpClient client, PowerAppClientSettings settings)
+        public DataverseServiceClient(HttpClient client, PowerAppTokenSettings settings)
         {
             _client = client;
             InitClient(settings);
         }
 
         public HttpClient Client => _client;
-        private void InitClient(PowerAppClientSettings settings)
+        private void InitClient(PowerAppTokenSettings settings)
         {
             AddDefaultHeaders();
         }

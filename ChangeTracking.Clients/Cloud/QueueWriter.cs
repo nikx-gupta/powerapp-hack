@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Storage.Queues;
-using CsvHelper;
-using CsvHelper.Configuration;
-using Dapper;
-using Dapper.Contrib.Extensions;
-using Dataverse.Entities;
-using Z.Dapper.Plus;
+using ChangeTracking.Clients.Configuration;
 
-namespace ChangeTracker.OutputWriters
+namespace ChangeTracking.Clients.Cloud
 {
     public class QueueWriter : IDisposable
     {

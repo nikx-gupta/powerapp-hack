@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Azure.Storage.Queues;
-using ChangeTracker.OutputWriters;
+using ChangeTracking.Clients.Configuration;
+using ChangeTracking.Clients.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +20,7 @@ namespace ChangeTracker.Listener.Library
             });
 
             services.AddSingleton(config.Get<CsvWriterSettings>());
-            services.AddSingleton(typeof(CsvOutputWriter<>));
+            services.AddSingleton(typeof(CsvFormatter<>));
         }
     }
 }

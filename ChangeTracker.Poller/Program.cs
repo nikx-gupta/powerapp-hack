@@ -2,11 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ChangeTracker.OutputWriters;
-using Dataverse.Core;
-using Dataverse.Core.ChangeTracking;
-using Dataverse.Core.Crud;
-using Dataverse.Entities;
+using ChangeTracking.Clients.Cloud;
+using ChangeTracking.Clients.Configuration;
+using ChangeTracking.Clients.Dataverse;
+using ChangeTracking.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +21,7 @@ namespace ChangeTracker.Poller
             var host = new HostBuilder()
                 .ConfigureServices((context, collection) =>
                 {
-                    collection.AddHostedService<PowerAppsHost>();
+                    collection.AddHostedService<DataSyncHost>();
                     PollerServiceRegistration.RegisterServices(collection, context.Configuration);
                 })
                 .ConfigureLogging((context, logBuilder) =>
@@ -46,12 +45,12 @@ namespace ChangeTracker.Poller
         }
     }
 
-    public class PowerAppsHost : IHostedService
+    public class DataSyncHost : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<PowerAppsHost> _logger;
+        private readonly ILogger<DataSyncHost> _logger;
 
-        public PowerAppsHost(IServiceProvider serviceProvider, ILogger<PowerAppsHost> logger)
+        public DataSyncHost(IServiceProvider serviceProvider, ILogger<DataSyncHost> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -59,7 +58,7 @@ namespace ChangeTracker.Poller
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var changeTracking = _serviceProvider.GetRequiredService<ChangeTrackingClient<AccountModel>>();
+            var changeTracking = _serviceProvider.GetRequiredService<DataverseChangeTrackingClient<AccountModel>>();
             var writerSettings = _serviceProvider.GetRequiredService<CsvWriterSettings>();
             using var writer = _serviceProvider.GetRequiredService<QueueWriter>();
 
@@ -81,8 +80,8 @@ namespace ChangeTracker.Poller
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
 
-            //var crudRepo = _serviceProvider.GetRequiredService<CrudOperation<AccountModel>>();
-            //var changeTracking = _serviceProvider.GetRequiredService<ChangeTrackingClient<AccountModel>>();
+            //var crudRepo = _serviceProvider.GetRequiredService<DataverseCrudWriter<AccountModel>>();
+            //var changeTracking = _serviceProvider.GetRequiredService<DataverseChangeTrackingClient<AccountModel>>();
 
             //await changeTracking.GetAllRecords();
 
@@ -95,7 +94,7 @@ namespace ChangeTracker.Poller
 
             //string accountId = rec.AccountId;
 
-            //await changeTracking.GetChangesAfterLastOperation();
+            //await changeTracking.GetDeltaChanges();
 
             //await crudRepo.UpdateRecord(accountId, new AccountModel()
             //{

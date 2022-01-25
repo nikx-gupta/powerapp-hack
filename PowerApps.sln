@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dataverse.Core", "Dataverse.Core\Dataverse.Core.csproj", "{D725A210-F358-4893-AFB5-6FD904C6F747}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dataverse.Entities", "Dataverse.Entities\Dataverse.Entities.csproj", "{0C6BAA25-FCF7-420F-A044-D299278AAF1E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A6DC302-BB39-4DEA-8032-92B597371B38}"
 	ProjectSection(SolutionItems) = preProject
 		PowerAppsConsole\.editorconfig = PowerAppsConsole\.editorconfig
@@ -16,13 +12,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.ModelConvertor", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{84DBF97F-45F4-4030-9BBC-2984B4C962D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracker.Listener.Library", "ChangeTracker.Listener.Library\ChangeTracker.Listener.Library.csproj", "{D560F84D-33E4-49A7-B056-BF9BAFA66A07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeTracker.Listener.Library", "ChangeTracker.Listener.Library\ChangeTracker.Listener.Library.csproj", "{D560F84D-33E4-49A7-B056-BF9BAFA66A07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracker.Listener", "ChangeTracker.Listener\ChangeTracker.Listener.csproj", "{BF09A7F4-02CB-4040-9663-E8772DD6623F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeTracker.Listener", "ChangeTracker.Listener\ChangeTracker.Listener.csproj", "{BF09A7F4-02CB-4040-9663-E8772DD6623F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracker.Poller", "ChangeTracker.Poller\ChangeTracker.Poller.csproj", "{9D401340-5588-4925-BDD8-A212D13B0421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeTracker.Poller", "ChangeTracker.Poller\ChangeTracker.Poller.csproj", "{9D401340-5588-4925-BDD8-A212D13B0421}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracker.OutputWriters", "ChangeTracker.OutputWriters\ChangeTracker.OutputWriters.csproj", "{B5EA44FC-089A-4323-9897-93F434C7B13A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracking.Clients", "ChangeTracking.Clients\ChangeTracking.Clients.csproj", "{3C3023DD-32CD-4940-9675-214432C83BA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracking.Core", "ChangeTracking.Core\ChangeTracking.Core.csproj", "{BA1318A5-5369-49E5-A137-F463A27AFA5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTracking.Entities", "ChangeTracking.Entities\ChangeTracking.Entities.csproj", "{B8427A94-080B-4927-B47C-17B331C2D819}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,14 +30,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D725A210-F358-4893-AFB5-6FD904C6F747}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D725A210-F358-4893-AFB5-6FD904C6F747}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D725A210-F358-4893-AFB5-6FD904C6F747}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D725A210-F358-4893-AFB5-6FD904C6F747}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C6BAA25-FCF7-420F-A044-D299278AAF1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C6BAA25-FCF7-420F-A044-D299278AAF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C6BAA25-FCF7-420F-A044-D299278AAF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C6BAA25-FCF7-420F-A044-D299278AAF1E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{23BAC867-9E72-4694-9A83-63344644F1D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{23BAC867-9E72-4694-9A83-63344644F1D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23BAC867-9E72-4694-9A83-63344644F1D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,10 +46,18 @@ Global
 		{9D401340-5588-4925-BDD8-A212D13B0421}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D401340-5588-4925-BDD8-A212D13B0421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D401340-5588-4925-BDD8-A212D13B0421}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B5EA44FC-089A-4323-9897-93F434C7B13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5EA44FC-089A-4323-9897-93F434C7B13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5EA44FC-089A-4323-9897-93F434C7B13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5EA44FC-089A-4323-9897-93F434C7B13A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C3023DD-32CD-4940-9675-214432C83BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C3023DD-32CD-4940-9675-214432C83BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C3023DD-32CD-4940-9675-214432C83BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C3023DD-32CD-4940-9675-214432C83BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA1318A5-5369-49E5-A137-F463A27AFA5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA1318A5-5369-49E5-A137-F463A27AFA5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA1318A5-5369-49E5-A137-F463A27AFA5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA1318A5-5369-49E5-A137-F463A27AFA5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8427A94-080B-4927-B47C-17B331C2D819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8427A94-080B-4927-B47C-17B331C2D819}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8427A94-080B-4927-B47C-17B331C2D819}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8427A94-080B-4927-B47C-17B331C2D819}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

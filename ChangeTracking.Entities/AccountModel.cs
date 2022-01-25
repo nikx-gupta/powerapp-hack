@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Dataverse.Entities
+namespace ChangeTracking.Entities
 {
     [DataverseTable(Name = "accounts")]
     public class AccountModel : BaseEntity

@@ -1,4 +1,4 @@
-﻿namespace Dataverse.Entities
+﻿namespace ChangeTracking.Entities
 {
     public class Contact
     {

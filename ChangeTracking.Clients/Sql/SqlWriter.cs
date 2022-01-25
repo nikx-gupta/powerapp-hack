@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
-using Dapper;
+using ChangeTracking.Clients.Configuration;
+using ChangeTracking.Entities;
 using Dapper.Contrib.Extensions;
-using Dataverse.Entities;
 using Z.Dapper.Plus;
 
-namespace ChangeTracker.OutputWriters
+namespace ChangeTracking.Clients.Sql
 {
     public class SqlWriter<T> : IDisposable where T : class
     {

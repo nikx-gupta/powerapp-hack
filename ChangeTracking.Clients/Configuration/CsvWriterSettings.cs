@@ -1,4 +1,4 @@
-﻿namespace ChangeTracker.OutputWriters
+﻿namespace ChangeTracking.Clients.Configuration
 {
     public class CsvWriterSettings
     {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ChangeTracker.Listener.Library;
-using ChangeTracker.OutputWriters;
-using Dataverse.Entities;
+using ChangeTracking.Clients.Formatters;
+using ChangeTracking.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -59,7 +59,7 @@ namespace ChangeTracker.Listener
                 var msg = await queueClient.ReceiveMessagesAsync(cancellationToken);
                 if (msg.Value.Length > 0)
                 {
-                    using var writer = _serviceProvider.GetService<CsvOutputWriter<AccountModel>>();
+                    using var writer = _serviceProvider.GetService<CsvFormatter<AccountModel>>();
                     foreach (var queueMessage in msg.Value)
                     {
                         writer.WriteBatch(queueMessage.Body.ToObjectFromJson<List<AccountModel>>());

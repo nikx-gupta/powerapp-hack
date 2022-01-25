@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using ChangeTracking.Clients.Configuration;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace ChangeTracker.OutputWriters
+namespace ChangeTracking.Clients.Formatters
 {
-    public class CsvOutputWriter<T> : IDisposable
+    public class CsvFormatter<T> : IDisposable
     {
         private CsvWriter _writer;
-        public CsvOutputWriter(CsvWriterSettings settings)
+        public CsvFormatter(CsvWriterSettings settings)
         {
             var fileName = $"Delta_{DateTime.Now.ToString("yyyy-MM-dd_hh_mm")}.csv";
             if (!Directory.Exists(settings.OutputPath))

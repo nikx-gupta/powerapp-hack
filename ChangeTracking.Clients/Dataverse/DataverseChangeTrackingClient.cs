@@ -3,31 +3,31 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dataverse.Entities;
+using ChangeTracking.Entities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Dataverse.Core.ChangeTracking
+namespace ChangeTracking.Clients.Dataverse
 {
     /// <summary>
     /// Change Tracking for Respective Entity/Table
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ChangeTrackingClient<T>
+    public class DataverseChangeTrackingClient<T>
     {
         private readonly Regex regexToken = new Regex("\\$deltatoken=(?<token>.+)", RegexOptions.Compiled);
         private readonly DataverseClient client;
-        private readonly ILogger<ChangeTrackingClient<T>> _logger;
+        private readonly ILogger<DataverseChangeTrackingClient<T>> _logger;
 
         public string TableName { get; }
         public string CurentChangeLink { get; private set; }
         public string CurrentChangeToken { get; private set; }
 
-        public ChangeTrackingClient(DataverseClient client, ILogger<ChangeTrackingClient<T>> logger)
+        public DataverseChangeTrackingClient(DataverseClient client, ILogger<DataverseChangeTrackingClient<T>> logger)
         {
             this.client = client;
             _logger = logger;
-            var tableAttr = (DataverseTable) Attribute.GetCustomAttribute(typeof(T), typeof(DataverseTable))!;
+            var tableAttr = (DataverseTable)Attribute.GetCustomAttribute(typeof(T), typeof(DataverseTable))!;
             if (tableAttr == null)
             {
                 throw new Exception($"DataverseTable Attribute is required on Model {typeof(T).Name}");
@@ -42,7 +42,7 @@ namespace Dataverse.Core.ChangeTracking
             {
                 headers.Add("PREFER", "odata.track-changes");
             });
-            
+
             var result = await client.Client.GetAsync(TableName);
             var record = JsonConvert.DeserializeObject<DataverseResponse<T>>(await result.Content.ReadAsStringAsync());
             CurentChangeLink = record.DeltaLink;
@@ -65,7 +65,7 @@ namespace Dataverse.Core.ChangeTracking
             if (!HasFailure(result))
             {
                 var record = JsonConvert.DeserializeObject<DataverseResponse<T>>(await result.Content.ReadAsStringAsync());
-                
+
                 CurentChangeLink = record.DeltaLink;
                 CurrentChangeToken = regexToken.Match(CurentChangeLink)?.Groups["token"].Value;
 
@@ -86,5 +86,10 @@ namespace Dataverse.Core.ChangeTracking
 
             return false;
         }
+    }
+
+    public class SqlConnectionSettings
+    {
+        public string SourceConnectionString { get; set; }
     }
 }

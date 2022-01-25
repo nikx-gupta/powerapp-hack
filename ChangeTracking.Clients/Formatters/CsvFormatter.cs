@@ -45,9 +45,9 @@ namespace ChangeTracking.Clients.Formatters
             _writer.WriteRecords(data);
         }
 
-        public void Flush()
+        public void Dispose()
         {
-            _writer.Dispose();
+            _writer?.Dispose();
         }
     }
 }

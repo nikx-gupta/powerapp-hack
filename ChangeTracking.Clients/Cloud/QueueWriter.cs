@@ -31,9 +31,8 @@ namespace ChangeTracking.Clients.Cloud
             }));
         }
 
-        public void Flush()
+        public void Dispose()
         {
-            // Not Required Flush    
         }
     }
 }

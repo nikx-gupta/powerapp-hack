@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Storage.Queues;
+using ChangeTracking.Clients;
 using ChangeTracking.Clients.Formatters;
 using ChangeTracking.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +14,14 @@ namespace ChangeTracker.Listener
 {
     public class ClientHost : IHostedService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly QueueClient _queueClient;
+        private readonly OutputWriterFactory _writerFactory;
         private readonly ILogger<ClientHost> _logger;
 
-        public ClientHost(IServiceProvider serviceProvider, ILogger<ClientHost> logger)
+        public ClientHost(QueueClient queueClient, OutputWriterFactory writerFactory, ILogger<ClientHost> logger)
         {
-            _serviceProvider = serviceProvider;
+            _queueClient = queueClient;
+            _writerFactory = writerFactory;
             _logger = logger;
         }
 
@@ -25,19 +29,19 @@ namespace ChangeTracker.Listener
         {
             _logger.LogInformation("Listening For Update Tracking Messages");
 
-            var queueClient = _serviceProvider.GetService<Azure.Storage.Queues.QueueClient>();
-
             while (true)
             {
-                var msg = await queueClient.ReceiveMessagesAsync(cancellationToken);
+                var msg = await _queueClient.ReceiveMessagesAsync(cancellationToken);
                 if (msg.Value.Length > 0)
                 {
-                    using var writer = _serviceProvider.GetService<CsvFormatter<AccountModel>>();
+                    var writer = _writerFactory.Instance();
                     foreach (var queueMessage in msg.Value)
                     {
                         writer.WriteBatch(queueMessage.Body.ToObjectFromJson<List<AccountModel>>());
-                        await queueClient.DeleteMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, cancellationToken);
+                        await _queueClient.DeleteMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, cancellationToken);
                     }
+
+                    _writerFactory.Flush();
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);

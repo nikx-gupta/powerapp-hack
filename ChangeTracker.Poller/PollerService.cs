@@ -15,14 +15,14 @@ public class PollerService<T> : IHostedService
 {
     private readonly PollerServiceSettings _settings;
     private readonly IChangeTrackingClient<T> _trackingClient;
-    private readonly OutputWriterFactory writerFactory;
+    private readonly OutputWriterFactory _writerFactory;
     private readonly ILogger<PollerService<T>> _logger;
 
     public PollerService(PollerServiceSettings settings, IChangeTrackingClient<T> trackingClient, OutputWriterFactory writerFactory, ILogger<PollerService<T>> logger)
     {
         _settings = settings;
         _trackingClient = trackingClient;
-        writerFactory = writerFactory;
+        _writerFactory = writerFactory;
         _logger = logger;
     }
 
@@ -31,14 +31,14 @@ public class PollerService<T> : IHostedService
         var allRecords = await _trackingClient.GetAllRecords();
         if (_settings.WriteAllRecordsOnStart)
         {
-            var writer = writerFactory.Instance();
+            var writer = _writerFactory.Instance();
             writer.WriteBatch(allRecords);
-            writer.Flush();
+            _writerFactory.Flush();
         }
 
         while (true)
         {
-            var writer = writerFactory.Instance();
+            var writer = _writerFactory.Instance();
             _logger.LogInformation($"Fetching Changes after Last Operation");
             var deltaRecords = await _trackingClient.GetDeltaChanges();
             _logger.LogInformation($"Changed Record Count: {deltaRecords.Count}");
@@ -48,7 +48,7 @@ public class PollerService<T> : IHostedService
                 writer.WriteBatch(deltaRecords.ToList());
             }
 
-            writerFactory.Flush();
+            _writerFactory.Flush();
 
             await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
         }

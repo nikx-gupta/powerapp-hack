@@ -1,15 +1,16 @@
-﻿using System.Net.Http.Headers;
-using System.Transactions;
-using Dataverse.Core.Configuration;
-using Dataverse.Core.Crud;
+﻿using System;
+using System.Net.Http.Headers;
+using ChangeTracking.Clients;
+using ChangeTracking.Clients.Configuration;
+using ChangeTracking.Clients.Dataverse;
+using ChangeTracking.Core;
+using Dataverse.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using PowerAppsConsole;
 
-namespace Dataverse.Core
+namespace ChangeTracker.Poller
 {
-    public static class DataverseServiceRegistration
+    public static class PollerServiceRegistration
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration config)
         {
@@ -27,8 +28,10 @@ namespace Dataverse.Core
                     new MediaTypeWithQualityHeaderValue("application/json"));
             }).AddHttpMessageHandler<TokenHandler>();
 
-            services.AddScoped(typeof(ChangeTrackingClient<>));
-            services.AddScoped(typeof(CrudOperation<>));
+            services.AddScoped(typeof(DataverseChangeTrackingClient<>));
+            services.AddScoped(typeof(DataverseCrudWriter<>));
+
+           services.RegisterWriters(config);
         }
     }
 }

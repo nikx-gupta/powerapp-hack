@@ -1,16 +1,17 @@
-﻿using System.Text;
-using Dataverse.Entities;
+﻿using System;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using ChangeTracking.Entities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Dataverse.Core.Crud
+namespace ChangeTracking.Clients.Dataverse
 {
-  
-
-    public class CrudOperation<T>
+    public class DataverseCrudWriter<T>
     {
         private readonly DataverseClient _client;
-        private readonly ILogger<CrudOperation<T>> _logger;
+        private readonly ILogger<DataverseCrudWriter<T>> _logger;
         public string TableName { get; }
 
         readonly JsonSerializerSettings settings = new JsonSerializerSettings()
@@ -18,7 +19,7 @@ namespace Dataverse.Core.Crud
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public CrudOperation(DataverseClient client, ILogger<CrudOperation<T>> logger)
+        public DataverseCrudWriter(DataverseClient client, ILogger<DataverseCrudWriter<T>> logger)
         {
             _client = client;
             _logger = logger;

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dataverse.Core.Configuration;
+﻿using System.Threading.Tasks;
+using ChangeTracking.Core.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
-namespace Dataverse.Core
+namespace ChangeTracking.Core
 {
     /// <summary>
     /// Token Service
@@ -14,13 +10,13 @@ namespace Dataverse.Core
     public class TokenService
     {
         private readonly AuthenticationContext _context;
-        public TokenService(PowerAppClientSettings settings)
+        public TokenService(AzureClientSettings settings)
         {
             Settings = settings;
             _context = new AuthenticationContext($"https://login.microsoftonline.com/{Settings.TenantId}", false);
         }
 
-        public PowerAppClientSettings Settings { get; }
+        public AzureClientSettings Settings { get; }
 
         /// <summary>
         /// Get Token
@@ -30,8 +26,6 @@ namespace Dataverse.Core
         {
             var cred = new ClientCredential(Settings.ClientId, Settings.ClientSecret);
             var token = await _context.AcquireTokenAsync(Settings.DataverseUrl, cred);
-
-            Console.WriteLine(token.ExpiresOn);
 
             return token.AccessToken;
         }

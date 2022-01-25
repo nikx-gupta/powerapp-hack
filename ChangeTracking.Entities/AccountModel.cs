@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Dataverse.Entities
+namespace ChangeTracking.Entities
 {
     [DataverseTable(Name = "accounts")]
     public class AccountModel : BaseEntity
@@ -24,8 +19,8 @@ namespace Dataverse.Entities
 
     public class BaseEntity
     {
-        [JsonProperty("@odata.context")]
-        public string Context { get; set; }
+        //[JsonProperty("@odata.context")]
+        //public string Context { get; set; }
         [JsonProperty("reason")]
         public string Reason { get; set; }
         [JsonProperty("id")]

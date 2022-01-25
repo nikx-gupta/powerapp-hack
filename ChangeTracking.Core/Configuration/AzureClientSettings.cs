@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Dataverse.Core.Configuration
+﻿namespace ChangeTracking.Core.Configuration
 {
-    public class PowerAppClientSettings
+    public class AzureClientSettings
     {
         public string DataverseUrl { get; set; }
 

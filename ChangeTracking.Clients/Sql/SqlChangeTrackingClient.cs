@@ -27,13 +27,14 @@ namespace ChangeTracking.Clients.Sql
         public SqlChangeTrackingClient(SqlConnection connection, ILogger<SqlChangeTrackingClient<T>> logger) : base(logger)
         {
             _reader = connection;
-            var tableAttr = AttributeHelper.GetAttributeName<DataverseTable, T>(isRequired: true);
-            var modifiedDate = AttributeHelper.GetAttributeName<ChangeTrackingModifiedDate, T>(isRequired: true);
+            var tableAttr = AttributeHelper.GetAttributeName<SqlTable, T>(isRequired: true);
+            var modifiedDate = AttributeHelper.OnProperty<SqlChangeTrackingModifiedDate, T>(isRequired: true);
 
             TableName = tableAttr.Name;
-            ModifiedDateColumnName = modifiedDate.Name;
+            ModifiedDateColumnName = modifiedDate;
             LastModifiedDate = DateTime.Today.AddDays(-30);
-;        }
+            ;
+        }
 
         public async Task<List<T>> GetAllRecords()
         {
@@ -42,13 +43,21 @@ namespace ChangeTracking.Clients.Sql
 
         public async Task<List<T>> GetDeltaChanges()
         {
-            var results = (await _reader.QueryAsync<T>($"SELECT * FROM {TableName} WHERE {ModifiedDateColumnName} > @ModifiedDate ORDER BY {ModifiedDateColumnName}", new { ModifiedDate = LastModifiedDate })).ToList();
-            if (results.Any())
+            try
             {
-                LastModifiedDate = results.Last().LastModifiedDate;
+                var results = (await _reader.QueryAsync<T>($"SELECT * FROM {TableName} WHERE {ModifiedDateColumnName} > @ModifiedDate ORDER BY {ModifiedDateColumnName}", new { ModifiedDate = LastModifiedDate })).ToList();
+                if (results.Any())
+                {
+                    LastModifiedDate = results.Last().LastModifiedDate;
+                }
+         
+                return results;
             }
-
-            return results;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

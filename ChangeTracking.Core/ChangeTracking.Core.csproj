@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChangeTracking.Entities\ChangeTracking.Entities.csproj" />
+  </ItemGroup>
+
 </Project>

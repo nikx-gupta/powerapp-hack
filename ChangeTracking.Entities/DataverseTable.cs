@@ -2,12 +2,19 @@
 
 namespace ChangeTracking.Entities
 {
-    public class DataverseTable : Attribute
+    public class SqlTable : ChangeTrackingAttribute
     {
-        public string Name { get; set; }
     }
 
-    public class ChangeTrackingModifiedDate: Attribute
+    public class DataverseTable : ChangeTrackingAttribute
+    {
+    }
+
+    public class SqlChangeTrackingModifiedDate : ChangeTrackingAttribute
+    {
+    }
+
+    public class ChangeTrackingAttribute : Attribute
     {
         public string Name { get; set; }
     }

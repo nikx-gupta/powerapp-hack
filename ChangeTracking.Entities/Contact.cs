@@ -1,22 +1,89 @@
-﻿namespace ChangeTracking.Entities
+﻿using System;
+using Dapper.Contrib.Extensions;
+using Newtonsoft.Json;
+
+namespace ChangeTracking.Entities
 {
-    public class Contact
+    [SqlTable(Name = "ccwis.Person")]
+    [DataverseTable(Name = "contacts")]
+    public class Contact : BaseEntity, ISqlTrackingEntity
     {
-        public string ccwis_ICWA_application_eligibility { get; set; }
-        public string ccwis_date_notified_by_tribe { get; set; }
-        public string ccwis_birthdate_indicator { get; set; }
-        public string ccwis_tribal_membership { get; set; }
-        public string ccwis_ethnicity { get; set; }
-        public string ccwis_allergies_indicator { get; set; }
-        public string ccwis_approved_caretaker_indicator { get; set; }
-        public string ccwis_caretaker_approved_date { get; set; }
-        public string ccwis_us_citizenship_indicator { get; set; }
-        public string ccwis_Previous_TPR_Indicator { get; set; }
-        public string ccwis_Birth_City { get; set; }
-        public string ccwis_birth_state { get; set; }
-        public string telephone1 { get; set; }
-        public string ccwis_Paternity_established { get; set; }
-        public string ccwis_Final_Location_Adoption { get; set; }
-        public string ccwis_Prior_Adoption_Agency { get; set; }
+        [JsonProperty("ccwis_ssn")]
+        public string SSN { get; set; }
+
+        [JsonProperty("lastname")]
+        public string SurName { get; set; }
+
+        [JsonProperty("firstname")]
+        public string GivenName { get; set; }
+
+        [JsonProperty("middlename")]
+        public string MiddleName { get; set; }
+
+        [JsonProperty("namesuffix")]
+        public string NameSuffix { get; set; }
+
+        [JsonProperty("birthdate")]
+        public string BirthDate { get; set; }
+
+        [JsonProperty("ccwis_facs_id_nbr")]
+        public string FACS_ID_NBR { get; set; }
+
+        [JsonProperty("ccwis_sex")]
+        public string Sex { get; set; }
+
+        [JsonProperty("ccwis_ethnicity")]
+        public string EthnicityCode { get; set; }
+
+        [JsonProperty("ccwis_emailaddresstypeprimary")]
+        public string EmailAddressPrimary { get; set; }
+
+        [JsonProperty("emailaddress1")]
+        [Write(false)]
+        public string PrimaryEmail => EmailAddressPrimary;
+
+        [JsonProperty("ccwis_emailaddresstypesecondary")]
+        public string EmailAddressSecondary { get; set; }
+
+        [JsonProperty("emailaddress2")]
+        [Write(false)]
+        public string SecondaryEmail => EmailAddressSecondary;
+
+        [JsonProperty("modifiedon")]
+        [SqlChangeTrackingModifiedDate]
+        public DateTime ModifiedOn { get; set; }
+
+        [Write(false)]
+        public DateTime LastModifiedDate => ModifiedOn;
     }
+
+    //public class PersonRace
+    //{
+    //    [JsonProperty("ccwis_ssn")]
+    //    public string SSN { get; set; }
+
+    //    [JsonProperty("lastname")]
+    //    public string SurName { get; set; }
+
+    //    [JsonProperty("firstname")]
+    //    public string GivenName { get; set; }
+
+    //    [JsonProperty("middlename")]
+    //    public string MiddleName { get; set; }
+
+    //    [JsonProperty("namesuffix")]
+    //    public string NameSuffix { get; set; }
+
+    //    [JsonProperty("birthdate")]
+    //    public string BirthDate { get; set; }
+
+    //    [JsonProperty("ccwis_facs_id_nbr")]
+    //    public string FACS_ID_NBR { get; set; }
+
+    //    [JsonProperty("ccwis_sex")]
+    //    public string Sex { get; set; }
+
+    //    [JsonProperty("ccwis_ethnicity")]
+    //    public string EthnicityCode { get; set; }
+    //}
 }

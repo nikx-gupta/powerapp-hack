@@ -20,10 +20,11 @@ namespace ChangeTracker.Poller
     {
         public static void RegisterPoller(this IServiceCollection services, IConfiguration config)
         {
-            services.RegisterSqlChangeTracking<AccountModel>(config.GetSettings<SqlChangeTrackingSettings>());
             services.RegisterCsvFormatter(config.GetSettings<CsvWriterSettings>());
             services.AddSingleton(config.GetSettings<PollerServiceSettings>());
-            services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IHostedService), typeof(PollerService<AccountModel>)));
+           
+            services.RegisterSqlChangeTracking<Contact>(config.GetSettings<SqlChangeTrackingSettings>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IHostedService), typeof(PollerService<Contact>)));
 
             // services.RegisterDataverseClient(config.Get<PowerAppTokenSettings>());
             // services.RegisterSqlWriters(config);

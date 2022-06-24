@@ -1,4 +1,4 @@
-﻿namespace ChangeTracking.Clients.Configuration
+﻿namespace ChangeTracking.Core.Configuration
 {
     public class QueueClientConfig
     {

@@ -9,10 +9,12 @@
         public string ClientSecret { get; set; }
 
         public string TenantId { get; set; }
+        public bool IsFunctionApp { get; set; }
     }
 
     public class PollerServiceSettings
     {
         public bool WriteAllRecordsOnStart { get; set; }
+        public bool IsFunctionApp { get; set; }
     }
 }

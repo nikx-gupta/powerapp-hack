@@ -1,7 +1,4 @@
-﻿using System;
-using ChangeTracking.Core.Configuration;
-
-namespace ChangeTracking.Clients.Configuration
+﻿namespace ChangeTracking.Core.Configuration
 {
     public class PowerAppTokenSettings : AzureTokenSettings
     {

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using ChangeTracking.Clients.Configuration;
 using ChangeTracking.Core.Helpers;
 using ChangeTracking.Entities;
 using Dapper.Contrib.Extensions;

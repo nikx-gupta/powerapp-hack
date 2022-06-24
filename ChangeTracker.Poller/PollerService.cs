@@ -28,29 +28,18 @@ public class PollerService<T> : IHostedService where T : class
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var allRecords = await _trackingClient.GetAllRecords();
-        if (_settings.WriteAllRecordsOnStart)
+        if (_settings.IsFunctionApp)
         {
-            var writer = _writerFactory.Instance();
-            writer.WriteBatch(allRecords);
-            _writerFactory.Flush();
+            // No Continous Poller in FunctionApp
+            var allRecords = await _trackingClient.GetAllRecords();
+
+        }
+        else
+        {
+            await StartContinousPoller(cancellationToken);
         }
 
-        while (true)
-        {
-            _logger.LogInformation($"Fetching Changes after Last Operation");
-            var deltaRecords = await _trackingClient.GetDeltaChanges();
-            _logger.LogInformation($"Changed Record Count: {deltaRecords.Count}");
-            _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
-            if (deltaRecords.Any())
-            {
-                var writer = _writerFactory.Instance();
-                writer.WriteBatch(deltaRecords.ToList());
-                _writerFactory.Flush();
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
-        }
+      
 
         //var crudRepo = _serviceProvider.GetRequiredService<DataverseCrudWriter<AccountModel>>();
         //var changeTracking = _serviceProvider.GetRequiredService<DataverseChangeTrackingClient<AccountModel>>();
@@ -88,6 +77,34 @@ public class PollerService<T> : IHostedService where T : class
         Console.ReadKey();
 
     }
+
+    private async Task StartContinousPoller(CancellationToken cancellationToken)
+    {
+        var allRecords = await _trackingClient.GetAllRecords();
+        if (_settings.WriteAllRecordsOnStart)
+        {
+            var writer = _writerFactory.Instance();
+            writer.WriteBatch(allRecords);
+            _writerFactory.Flush();
+        }
+
+        while (true)
+        {
+            _logger.LogInformation($"Fetching Changes after Last Operation");
+            var deltaRecords = await _trackingClient.GetDeltaChanges();
+            _logger.LogInformation($"Changed Record Count: {deltaRecords.Count}");
+            _logger.LogInformation(JsonConvert.SerializeObject(deltaRecords, Formatting.Indented));
+            if (deltaRecords.Any())
+            {
+                var writer = _writerFactory.Instance();
+                writer.WriteBatch(deltaRecords.ToList());
+                _writerFactory.Flush();
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+        }
+    }
+
 
     public Task StopAsync(CancellationToken cancellationToken)
     {

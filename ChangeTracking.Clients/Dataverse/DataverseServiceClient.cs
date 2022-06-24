@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using ChangeTracking.Clients.Configuration;
+using ChangeTracking.Core.Configuration;
 
 namespace ChangeTracking.Clients.Dataverse
 {

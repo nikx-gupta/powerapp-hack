@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Storage.Queues;
-using ChangeTracking.Clients.Configuration;
 
 namespace ChangeTracking.Clients.Cloud
 {

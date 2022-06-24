@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using ChangeTracking.Clients.Cloud;
-using ChangeTracking.Clients.Configuration;
+using ChangeTracking.Core.Configuration;
 using CsvHelper;
 using CsvHelper.Configuration;
 

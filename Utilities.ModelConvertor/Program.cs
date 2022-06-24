@@ -11,27 +11,27 @@ namespace Utilities.ModelConvertor // Note: actual namespace depends on the proj
     {
         static void Main(string[] args)
         {
+            
+            //string jsonFileName = "input_model.json";
 
-            string jsonFileName = "input_model.json";
+            //JObject objModel = JObject.Parse(File.ReadAllText(jsonFileName));
 
-            JObject objModel = JObject.Parse(File.ReadAllText(jsonFileName));
+            //var className = "Person";
+            //StringBuilder sb = new StringBuilder();
 
-            var className = "Person";
-            StringBuilder sb = new StringBuilder();
+            //sb.AppendLine($"public class {className} {{");
+            //foreach (var property in objModel.Properties())
+            //{
+            //    if (property.Value.Type != JTokenType.Array && property.Value.Type != JTokenType.Object)
+            //    {
+            //        NormalizeName(sb, property.Name);
+            //        //sb.AppendLine($"public string {property.Name} {{get;set;}}");
+            //    }
+            //}
 
-            sb.AppendLine($"public class {className} {{");
-            foreach (var property in objModel.Properties())
-            {
-                if (property.Value.Type != JTokenType.Array && property.Value.Type != JTokenType.Object)
-                {
-                    NormalizeName(sb, property.Name);
-                    //sb.AppendLine($"public string {property.Name} {{get;set;}}");
-                }
-            }
+            //sb.AppendLine("}");
 
-            sb.AppendLine("}");
-
-            File.WriteAllText($"{className}.cs", sb.ToString());
+            //File.WriteAllText($"{className}.cs", sb.ToString());
         }
 
         static void NormalizeName(StringBuilder sb, string dataVal)

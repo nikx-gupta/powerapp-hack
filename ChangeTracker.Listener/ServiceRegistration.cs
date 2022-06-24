@@ -1,7 +1,5 @@
-﻿using Azure.Storage.Queues;
-using ChangeTracking.Clients;
-using ChangeTracking.Clients.Configuration;
-using ChangeTracking.Clients.Formatters;
+﻿using ChangeTracking.Clients;
+using ChangeTracking.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
